@@ -13,7 +13,7 @@ class Lista{
     }
     
     insertar(dato){
-        var nuevo = Nodo(dato)
+        var nuevo = new Nodo(dato)
         if(this.primero == null){
             this.primero = nuevo;
             this.ultimo = this.primero;
