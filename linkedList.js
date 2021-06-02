@@ -14,19 +14,22 @@ class Lista{
     
     insertar(dato){
         var nuevo = new Nodo(dato)
+        nuevo.anterior = nuevo.siguiente = null;
         if(this.primero == null){
             this.primero = nuevo;
             this.ultimo = this.primero;
             this.tamanio++;
         }else{
             this.ultimo.siguiente = nuevo;
-            nuevo.anterior = this.ultmo;
+            nuevo.anterior = this.ultimo;
             this.ultimo = nuevo;
             this.tamanio++;
         }
     }
     eliminar(dato){
-        if(this.primero.dato == dato){
+        if(this.tamanio == 1 && this.primero.dato == dato){
+            this.primero = this.ultimo = null;
+        }else if(this.primero.dato == dato){
             this.primero = this.primero.siguiente;
             this.primero.anterior = null;
         }else if(this.ultimo.dato == dato){
@@ -47,4 +50,25 @@ class Lista{
         }
         this.tamanio--;
     }
+    recorrer(){
+        var aux = this.primero;
+        if(this.tamanio!= 0){
+            while(aux != null){
+                console.log(aux.dato)
+                aux = aux.siguiente;
+            }
+        }else{
+            console.log("No hay datos que mostrar")
+        }
+    }
 }
+
+var List = new Lista();
+List.insertar(1);
+List.insertar(2);
+List.insertar(3);
+List.insertar(4);
+List.insertar(5);
+List.insertar(6);
+List.eliminar(5)
+List.recorrer();
