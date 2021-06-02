@@ -36,7 +36,8 @@ class Lista{
         else{
             var aux = this.primero;
             while(aux.siguiente.dato != dato){
-                if(aux.siguiente == nil){
+                aux = aux.siguiente;
+                if(aux.siguiente == null){
                     console.log("El valor a eliminar no existe");
                     return;
                 }
