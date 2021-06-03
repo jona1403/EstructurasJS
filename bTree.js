@@ -51,11 +51,53 @@ class ArbolB{
                 for(i=this.EnMedio+1; i< this.Grado; i++){
                     temp.Hijos[1].insertar(c.Claves[i])
                 }
+                if(c.Hijos.length > 0){
+                    for(i = 0; i <= this.EnMedio; i++){
+                        temp.Hijos[0].Hijos[i] = c.Hijos[i]
+                        temp.Hijos[0].Hijos[i].Padre = temp.Hijos[0]
+                    }
+                    for(i = this.EnMedio+1; i <= this.Grado; i++){
+                        temp.Hijos[1].Hijos[i-this.EnMedio+1] = c.Hijos[i]
+                        temp.Hijos[1].Hijos[i-this.EnMedio+1].Padre = temp.Hijos[1]
+                    }
+                }
             }else{
-                
+                var claveMedia = temp.Claves[this.EnMedio]
+                temp.Padre.insertar(claveMedia)
+                var tieneHijos = false;
+                if(temp.Hijos.length> 0){
+                    tieneHijos = true;
+                }
+                var index = 0;
+                for(index; index < temp.Padre.Claves.length; index++){
+                    if (temp.Padre.Claves[index] == claveMedia){
+                        break;
+                    }
+                }
+                var aux = temp;
+                temp.Padre.Hijos[index] = new Nodo();
+                temp.Padre.Hijos[index].Padre = temp.Padre;
+                for(i=0; i<this.EnMedio; i++){
+                    temp.Padre.Hijos[index].insertar(aux.Claves[i]);
+                }
+                temp.Padre.Hijos[index+1] = new Nodo();
+                temp.Padre.Hijos[index+1].Padre = temp.Padre;
+                for(i=this.EnMedio+1; i< this.Grado; i++){
+                    temp.Padre.Hijos[index+1].insertar(aux.Claves[i]);
+                }
+                if(tieneHijos){
+                    for(i = 0; i<=this.EnMedio; i++){
+                        temp.Padre.Hijos[index].Hijos[i] = aux.Hijos[i]
+                        temp.Padre.Hijos[index].Hijos[i].Padre = temp.Padre.Hijos[index]
+                    }
+                    for(i = this.EnMedio+1; i<=this.Grado; i++){
+                        temp.Padre.Hijos[index+1].Hijos[i-(this.EnMedio+1)] = aux.Hijos[i]
+                        temp.Padre.Hijos[index+1].Hijos[i-(this.EnMedio+1)].Padre = temp.Padre.Hijos[index+1]
+                    }
+                }
             }
         }
-        return raiz;
+        return temp;
     }
 }
 
