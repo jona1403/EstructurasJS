@@ -61,6 +61,25 @@ class Lista{
             console.log("No hay datos que mostrar")
         }
     }
+    
+    buscarPosicion(posicion){
+        var isEncontrado = false;
+        if (this.tamanio == 0){
+            console.log("No hay elementos en la lista")
+        }else {
+            if (posicion >= 0 && posicion < this.tamanio){
+                let aux = this.primero
+                for (let i=0; i<posicion; i++){
+                    aux = aux.siguiente
+                }
+                isEncontrado = true
+                return aux.dato
+            } else {
+                isEncontrado = false
+                console.log("Indice no valido, esta fuera de rango.")
+            }
+        }
+    }
 }
 
 var List = new Lista();
@@ -72,3 +91,6 @@ List.insertar(5);
 List.insertar(6);
 List.eliminar(5)
 List.recorrer();
+
+console.log("")
+console.log(List.buscarPosicion(0))
