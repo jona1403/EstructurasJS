@@ -1,60 +1,58 @@
 class Nodo{
     constructor(dato){
-        this.dato = dato;
-        this.siguiente = null;
-        this.anterior = null;
+        this.dato = dato
+        this.siguiente = null
+        this.anterior = null
     }
 }
 class Lista{
     constructor(){
-        this.primero = null;
-        this.ultimo = null;
-        this.tamanio = 0;
+        this.primero = null
+        this.ultimo = null
+        this.tamanio = 0
     }
     
     insertarAlInicio(dato){
         var nuevo = new Nodo(dato)
-        nuevo.anterior = nuevo.siguiente = null;
+        nuevo.anterior = nuevo.siguiente = null
         if(this.primero == null){
-            this.primero = nuevo;
-            this.ultimo = this.primero;
-            this.tamanio++;
+            this.primero = nuevo
+            this.ultimo = this.primero
         }else{
-            this.primero.anterior = nuevo;
-            nuevo.siguiente = this.primero;
-            this.primero = nuevo;
-            this.tamanio++;
+            this.primero.anterior = nuevo
+            nuevo.siguiente = this.primero
+            this.primero = nuevo
         }
+        this.tamanio++
     }
 
     insertarAlFinal(dato){
         var nuevo = new Nodo(dato)
-        nuevo.anterior = nuevo.siguiente = null;
+        nuevo.anterior = nuevo.siguiente = null
         if(this.primero == null){
-            this.primero = nuevo;
-            this.ultimo = this.primero;
-            this.tamanio++;
+            this.primero = nuevo
+            this.ultimo = this.primero
         }else{
-            this.ultimo.siguiente = nuevo;
-            nuevo.anterior = this.ultimo;
-            this.ultimo = nuevo;
-            this.tamanio++;
+            this.ultimo.siguiente = nuevo
+            nuevo.anterior = this.ultimo
+            this.ultimo = nuevo
         }
+        this.tamanio++
     }
 
     insertarEnOrden(dato){
-        var nuevo = new Nodo(dato)
-        nuevo.anterior = nuevo.siguiente = null;
         if(this.primero == null){
-            this.primero = nuevo;
-            this.ultimo = this.primero;
-            this.tamanio++;
+            var nuevo = new Nodo(dato)
+            nuevo.anterior = nuevo.siguiente = null
+            this.primero = nuevo
+            this.ultimo = this.primero
+            this.tamanio++
         }else if(dato < this.primero.dato || dato == this.primero.dato){
             this.insertarAlInicio(dato)
         }else if(dato > this.ultimo.dato|| dato == this.ultimo.dato){
             this.insertarAlFinal(dato)
         }else{
-            this.primero = this._insertarEnOrden(dato, this.primero);
+            this.primero = this._insertarEnOrden(dato, this.primero)
         }
     }
 
@@ -65,6 +63,7 @@ class Lista{
             nuevo.siguiente = temp.siguiente
             temp.siguiente.anterior = nuevo
             temp.siguiente = nuevo
+            this.tamanio++
         }else{
             temp.siguiente =  this._insertarEnOrden(dato, temp.siguiente)
         }
