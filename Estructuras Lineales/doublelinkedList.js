@@ -12,7 +12,22 @@ class Lista{
         this.tamanio = 0;
     }
     
-    insertar(dato){
+    insertarAlInicio(dato){
+        var nuevo = new Nodo(dato)
+        nuevo.anterior = nuevo.siguiente = null;
+        if(this.primero == null){
+            this.primero = nuevo;
+            this.ultimo = this.primero;
+            this.tamanio++;
+        }else{
+            this.primero.anterior = nuevo;
+            nuevo.siguiente = this.primero;
+            this.primero = nuevo;
+            this.tamanio++;
+        }
+    }
+
+    insertarAlFinal(dato){
         var nuevo = new Nodo(dato)
         nuevo.anterior = nuevo.siguiente = null;
         if(this.primero == null){
@@ -26,6 +41,36 @@ class Lista{
             this.tamanio++;
         }
     }
+
+    insertarEnOrden(dato){
+        var nuevo = new Nodo(dato)
+        nuevo.anterior = nuevo.siguiente = null;
+        if(this.primero == null){
+            this.primero = nuevo;
+            this.ultimo = this.primero;
+            this.tamanio++;
+        }else if(dato < this.primero.dato || dato == this.primero.dato){
+            this.insertarAlInicio(dato)
+        }else if(dato > this.ultimo.dato|| dato == this.ultimo.dato){
+            this.insertarAlFinal(dato)
+        }else{
+            this.primero = this._insertarEnOrden(dato, this.primero);
+        }
+    }
+
+    _insertarEnOrden(dato, temp){
+        if(dato < temp.siguiente.dato){
+            var nuevo = new Nodo(dato)
+            nuevo.anterior = temp
+            nuevo.siguiente = temp.siguiente
+            temp.siguiente.anterior = nuevo
+            temp.siguiente = nuevo
+        }else{
+            temp.siguiente =  this._insertarEnOrden(dato, temp.siguiente)
+        }
+        return temp
+    }
+
     eliminar(dato){
         if(this.tamanio == 1 && this.primero.dato == dato){
             this.primero = this.ultimo = null;
@@ -80,17 +125,17 @@ class Lista{
             }
         }
     }
+
+    buscar(dato){
+        if(this.primero.dato != dato && this.ultimo.dato != dato){
+            var aux = this.primero;
+            while(aux.siguiente.dato != dato){
+                aux = aux.siguiente;
+                if(aux.siguiente == null){
+                    return false;
+                }
+            }
+        }
+        return true
+    }
 }
-
-var List = new Lista();
-List.insertar(1);
-List.insertar(2);
-List.insertar(3);
-List.insertar(4);
-List.insertar(5);
-List.insertar(6);
-List.eliminar(5)
-List.recorrer();
-
-console.log("")
-console.log(List.buscarPosicion(0))
