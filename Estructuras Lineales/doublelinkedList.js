@@ -71,6 +71,28 @@ class Lista{
         return temp
     }
 
+    actualizar(datoActual, datoNuevo){
+        if(datoActual == this.primero.dato && this.tamanio == 1){
+            this.primero.dato = datoNuevo
+            this.ultimo.dato = datoNuevo
+        }else if(datoActual == this.primero.dato){
+            this.primero.dato = datoNuevo
+        }else if(datoActual == this.ultimo.dato){
+            this.ultimo.dato = datoNuevo
+        }else{
+            this.primero = this._actualizar(datoActual, datoNuevo, this.primero)
+        }
+    }
+
+    _actualizar(datoActual, datoNuevo, temp){
+        if(datoActual == temp.dato){
+            temp.dato = datoNuevo
+        }else{
+            temp.siguiente =  this._actualizar(datoActual, datoNuevo, temp.siguiente)
+        }
+        return temp
+    }
+
     eliminar(dato){
         if(this.tamanio == 1 && this.primero.dato == dato){
             this.primero = this.ultimo = null;
