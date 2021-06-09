@@ -7,55 +7,72 @@ class Nodo{
 }
 class Lista{
     constructor(){
+        this.repetidos = false
         this.primero = null
         this.ultimo = null
         this.tamanio = 0
     }
     
+    //Inserta datos al inicio de la lista
     insertarAlInicio(dato){
-        var nuevo = new Nodo(dato)
-        nuevo.anterior = nuevo.siguiente = null
-        if(this.primero == null){
-            this.primero = nuevo
-            this.ultimo = this.primero
+        if(!this.repetidos && this.buscar(dato)){
+            alert("Este dato ya existe, por favor habilite los datos repetidos")
         }else{
-            this.primero.anterior = nuevo
-            nuevo.siguiente = this.primero
-            this.primero = nuevo
+            var nuevo = new Nodo(dato)
+            nuevo.anterior = nuevo.siguiente = null
+            if(this.primero == null){
+                this.primero = nuevo
+                this.ultimo = this.primero
+            }else{
+                this.primero.anterior = nuevo
+                nuevo.siguiente = this.primero
+                this.primero = nuevo
+            }
+            this.tamanio++
         }
-        this.tamanio++
     }
 
+    //Inserta datos al final de la lista
     insertarAlFinal(dato){
-        var nuevo = new Nodo(dato)
-        nuevo.anterior = nuevo.siguiente = null
-        if(this.primero == null){
-            this.primero = nuevo
-            this.ultimo = this.primero
+        if(!this.repetidos && this.buscar(dato)){
+            alert("Este dato ya existe, por favor habilite los datos repetidos")
         }else{
-            this.ultimo.siguiente = nuevo
-            nuevo.anterior = this.ultimo
-            this.ultimo = nuevo
+            var nuevo = new Nodo(dato)
+            nuevo.anterior = nuevo.siguiente = null
+            if(this.primero == null){
+                this.primero = nuevo
+                this.ultimo = this.primero
+            }else{
+                this.ultimo.siguiente = nuevo
+                nuevo.anterior = this.ultimo
+                this.ultimo = nuevo
+            }
+            this.tamanio++
         }
-        this.tamanio++
     }
 
+    //Metodo de sobre carga para insertar datos en orden dentro de la lista
     insertarEnOrden(dato){
-        if(this.primero == null){
+        if(!this.repetidos && this.buscar(dato)){
+            alert("Este dato ya existe, por favor habilite los datos repetidos")
+        }else{
+            if(this.primero == null){
             var nuevo = new Nodo(dato)
             nuevo.anterior = nuevo.siguiente = null
             this.primero = nuevo
             this.ultimo = this.primero
             this.tamanio++
-        }else if(dato < this.primero.dato || dato == this.primero.dato){
-            this.insertarAlInicio(dato)
-        }else if(dato > this.ultimo.dato|| dato == this.ultimo.dato){
-            this.insertarAlFinal(dato)
-        }else{
-            this.primero = this._insertarEnOrden(dato, this.primero)
+            }else if(dato < this.primero.dato || dato == this.primero.dato){
+                this.insertarAlInicio(dato)
+            }else if(dato > this.ultimo.dato|| dato == this.ultimo.dato){
+                this.insertarAlFinal(dato)
+            }else{
+                this.primero = this._insertarEnOrden(dato, this.primero)
+            }
         }
     }
 
+    //Metodo recursivo para insertar datos a la lista
     _insertarEnOrden(dato, temp){
         if(dato < temp.siguiente.dato){
             var nuevo = new Nodo(dato)
@@ -70,19 +87,29 @@ class Lista{
         return temp
     }
 
+    //Metodo de sobrecarga para actualizar datos
     actualizar(datoActual, datoNuevo){
-        if(datoActual == this.primero.dato && this.tamanio == 1){
-            this.primero.dato = datoNuevo
-            this.ultimo.dato = datoNuevo
-        }else if(datoActual == this.primero.dato){
-            this.primero.dato = datoNuevo
-        }else if(datoActual == this.ultimo.dato){
-            this.ultimo.dato = datoNuevo
+        if(this.buscar(datoActual)){
+            if(this.buscar(datoNuevo) && !this.repetidos){
+                alert("No se aceptan valores repetidos")
+                return
+            }
+            if(datoActual == this.primero.dato && this.tamanio == 1){
+                this.primero.dato = datoNuevo
+                this.ultimo.dato = datoNuevo
+            }else if(datoActual == this.primero.dato){
+                this.primero.dato = datoNuevo
+            }else if(datoActual == this.ultimo.dato){
+                this.ultimo.dato = datoNuevo
+            }else{
+                this.primero = this._actualizar(datoActual, datoNuevo, this.primero)
+            }
         }else{
-            this.primero = this._actualizar(datoActual, datoNuevo, this.primero)
+            alert("El valor no existe dentro de la lista")
         }
     }
 
+    //Metodo recursivo para la actualizacion de datos
     _actualizar(datoActual, datoNuevo, temp){
         if(datoActual == temp.dato){
             temp.dato = datoNuevo
@@ -92,6 +119,7 @@ class Lista{
         return temp
     }
 
+    //Metodo para eliminar un dato
     eliminar(dato){
         if(this.tamanio == 1 && this.primero.dato == dato){
             this.primero = this.ultimo = null;
@@ -116,6 +144,8 @@ class Lista{
         }
         this.tamanio--;
     }
+
+    //Metodo imprime los valores de la lista
     recorrer(){
         var aux = this.primero;
         if(this.tamanio!= 0){
@@ -128,6 +158,7 @@ class Lista{
         }
     }
     
+    //Metodo para la busqueda por posicion 
     buscarPosicion(posicion){
         var isEncontrado = false;
         if (this.tamanio == 0){
@@ -147,16 +178,37 @@ class Lista{
         }
     }
 
+    //Metodo de sobrecarga para la busqueda
     buscar(dato){
-        if(this.primero.dato != dato && this.ultimo.dato != dato){
-            var aux = this.primero;
-            while(aux.siguiente.dato != dato){
-                aux = aux.siguiente;
-                if(aux.siguiente == null){
-                    return false;
-                }
+        if(this.primero == null){
+            return false
+        }else if(this.primero.dato == dato || this.ultimo.dato == dato){
+            return true
+        }else{
+            return this._buscar(dato, this.primero.siguiente)
+        }
+    }
+
+    //Metodo de recursivo para la busqueda
+    _buscar(dato, temp){
+        if(temp != null){
+            if(temp.dato == dato){
+                return true
+            }else if(temp.siguiente!= null){
+                return this._buscar(dato, temp.siguiente)
             }
         }
-        return true
+        return false
     }
+
 }
+
+a = new Lista()
+a.insertarEnOrden(1)
+a.insertarEnOrden(31)
+a.insertarEnOrden(12)
+a.insertarEnOrden(111)
+a.insertarEnOrden(14)
+a.insertarEnOrden(154)
+a.insertarEnOrden(351)
+a.insertarEnOrden(0)
