@@ -1,140 +1,209 @@
-            class Nodo{
-                constructor(Padre){
-                    this.Claves = [];
-                    this.Hijos = [];
-                    this.Padre = Padre;
-                }
-                insertar(dato){
-                    this.Claves.push(dato);
-                    if(this.Claves.length > 1){
-                        this.Claves = sort(this.Claves);
-                    }
+var contador = 1
+var arrayNodes = []
+var edges = []
+class Nodo{
+    constructor(padre, id){
+        this.id = id
+        this.claves = []
+        this.hijos = []
+        this.padre = padre
+    }
+    
+    //Agrega valores al nodo
+    agregar(valor){
+        this.claves.push(valor)
+        if(this.claves.length > 1){
+            this.claves = sort(this.claves)
+        }
+    }
+}
+
+class ArbolB{
+    constructor(grado){
+        this.grado = grado
+        if(espar(grado)){
+            this.enmedio = grado/2
+        }else{
+            this.enmedio = (grado-1)/2
+        }
+        this.raiz = new Nodo(null, 0)
+    }
+
+    agregar(valor){
+        this.raiz = this._agregar(valor, this.raiz)
+        this.graficar()
+    }
+
+    _agregar(valor, temp){
+        if(temp.hijos.length == 0){
+            temp.agregar(valor)
+        }else{
+            var encontrar = false
+            for(i = 0; i<temp.claves.length; i++){
+                if(valor < temp.claves[i]){
+                    encontrar = true
+                    temp.hijos[i] = this._agregar(valor, temp.hijos[i])
+                    break;
                 }
             }
-
-            class ArbolB{
-                constructor(grado){
-                    this.Raiz = new Nodo();
-                    this.Grado = grado;
-                    if(espar(this.Grado)){
-                        this.EnMedio = grado/2;
-                    }else{
-                        this.EnMedio = (grado-1)/2;
+            if(!encontrar){
+                temp.hijos[temp.claves.length] = this._agregar(valor, temp.hijos[temp.claves.length])
+            }
+        }
+        if(temp.claves.length == this.grado){
+            if(temp.padre == null){
+                contador++
+                var c = temp;
+                temp = new Nodo(null, contador)
+                temp.agregar(c.claves[this.enmedio])
+                contador++
+                temp.hijos.push(new Nodo(temp, contador))
+                contador++
+                temp.hijos.push(new Nodo(temp, contador))
+                for(i = 0; i<this.enmedio; i++){
+                    temp.hijos[0].agregar(c.claves[i])
+                    temp.hijos[1].agregar(c.claves[i+this.enmedio+1])
+                }
+                if(c.hijos.length > 0){
+                    for(i = 0; i<this.enmedio+1; i++){
+                        temp.hijos[0].hijos[i] = c.hijos[i]
+                        temp.hijos[0].hijos[i].padre = temp.hijos[0]
+                        temp.hijos[1].hijos[i] = c.hijos[i+this.enmedio+1]
+                        temp.hijos[1].hijos[i].padre = temp.hijos[1]
                     }
                 }
-                insertar(dato){
-                    this.Raiz = this._insertar(dato, this.Raiz);
+            }else{
+                var claveMedia = temp.claves[this.enmedio]
+                temp.padre.agregar(claveMedia)
+                var index
+
+                var tieneHijos = false
+                if(temp.hijos.length > 0){
+                    tieneHijos = true
                 }
-                _insertar(dato, temp){
-                    var i = 0;
-                    if(temp.Hijos.length == 0){
-                        temp.insertar(dato);
-                    }/*else{
-                        var encontrado = false;
-                        for(i= 0; i<temp.Claves.length-1; i++){
-                            if (dato < temp.Claves[i]){
-                                encontrado = true;
-                                this._insertar(dato, temp.Hijos[i]);
-                                break
-                            }
-                        }
-                        if(!encontrado){
-                            this._insertar(dato, temp.Hijos[temp.Claves.length]);
-                        }
-                    }*/
+
+
+                for(index = 0; index < temp.padre.claves.length; index++){
+                    if(temp.padre.claves[index] == claveMedia){
+                        break
+                    }
+                }
+
+                for(i = temp.padre.claves.length; i>index+1; i--){
+                    temp.padre.hijos[i] = temp.padre.hijos[i-1]
+                }
+
+                var aux = temp
+                contador++
+                temp.padre.hijos[index] = new Nodo(temp.padre, contador)
+                //console.log("Claves  "+temp.padre.hijos[index].claves)
+
+                contador ++
+                temp.padre.hijos[index+1] = new Nodo(temp.padre, contador)
+                for(i = 0; i<this.enmedio; i++){
+                    console.log(aux.claves[i])
+                    temp.padre.hijos[index].agregar(aux.claves[i])
+                    temp.padre.hijos[index+1].agregar(aux.claves[i+this.enmedio+1])
+                }
+                temp = temp.padre.hijos[index]
+
+                if(tieneHijos){
+                    for(i = 0; i<this.enmedio+1; i++){
+                        temp.padre.hijos[index].hijos[i] = aux.hijos[i]
+                        temp.padre.hijos[index].hijos[i].padre = temp.padre.hijos[index]
+                    }
+                    for(i = this.enmedio+1; i<this.grado+1; i++){
+                        temp.padre.hijos[index+1].hijos[i-this.enmedio-1] = aux.hijos[i]
+                        temp.padre.hijos[index+1].hijos[i-this.enmedio-1].padre = temp.padre.hijos[index+1]
+                    }
                     
-                    if(temp.Claves.length == this.Grado){
-                        if(temp.Padre == null){
-                            var c = temp;
-                            temp = new Nodo(null);
-                            temp.insertar(c.Claves[this.EnMedio]);
-                            temp.Hijos[0] = new Nodo(temp);
-                            temp.Hijos[1] = new Nodo(temp);
-                            for(i=0; i < this.EnMedio; i++){
-                                temp.Hijos[0].insertar(c.Claves[i]);
-                            }
-                            for(i=this.EnMedio+1; i< this.Grado; i++){
-                                temp.Hijos[1].insertar(c.Claves[i]);
-                            }
-                            if(c.Hijos.length > 0){
-                                for(i = 0; i <= this.EnMedio; i++){
-                                    temp.Hijos[0].Hijos[i].push(c.Hijos[i]); 
-                                    temp.Hijos[0].Hijos[i].Padre = temp.Hijos[0];
-                                }
-                                for(i = this.EnMedio+1; i <= this.Grado; i++){
-                                    temp.Hijos[1].Hijos[i-this.EnMedio+1].push(c.Hijos[i]);
-                                    temp.Hijos[1].Hijos[i-this.EnMedio+1].Padre = temp.Hijos[1];
-                                }
-                            }
-                        }else{
-                            var claveMedia = temp.Claves[this.EnMedio]
-                            temp.Padre.insertar(claveMedia)
-                            var tieneHijos = false;
-                            if(temp.Hijos.length> 0){
-                                tieneHijos = true;
-                            }
-                            var index = 0;
-                            for(index; index < temp.Padre.Claves.length; index++){
-                                if (temp.Padre.Claves[index] == claveMedia){
-                                    break;
-                                }
-                            }
-                            var aux = temp;
-                            temp.Padre.Hijos[index] = new Nodo();
-                            temp.Padre.Hijos[index].Padre = temp.Padre;
-                            for(i=0; i<this.EnMedio; i++){
-                                temp.Padre.Hijos[index].insertar(aux.Claves[i]);
-                            }
-                            temp.Padre.Hijos[index+1] = new Nodo();
-                            temp.Padre.Hijos[index+1].Padre = temp.Padre;
-                            for(i=this.EnMedio+1; i< this.Grado; i++){
-                                temp.Padre.Hijos[index+1].insertar(aux.Claves[i]);
-                            }
-                            if(tieneHijos){
-                                for(i = 0; i<=this.EnMedio; i++){
-                                    temp.Padre.Hijos[index].Hijos[i] = aux.Hijos[i]
-                                    temp.Padre.Hijos[index].Hijos[i].Padre = temp.Padre.Hijos[index]
-                                }
-                                for(i = this.EnMedio+1; i<=this.Grado; i++){
-                                    temp.Padre.Hijos[index+1].Hijos[i-(this.EnMedio+1)] = aux.Hijos[i]
-                                    temp.Padre.Hijos[index+1].Hijos[i-(this.EnMedio+1)].Padre = temp.Padre.Hijos[index+1]
-                                }
-                            }
-                        }
-                    }
-                    return temp;
                 }
             }
+        }
+        return temp
+    }
 
-
-            function sort(arreglo){
-                var aux = 0;
-                for(i=0; i< arreglo.length-1; i++){
-                    for(j=i+1; j<arreglo.length; j++){
-                        if(arreglo[i] > arreglo[j]){
-                            aux = arreglo[i];
-                            arreglo[i] = arreglo[j];
-                            arreglo[j] = aux;
-                        }
-                    }
-                }
-                return arreglo;
-            }
-
-            function espar(valor){
-                if (valor%2==0) {
-                    return true;
-                
-                } else {
-                    return false;
+    recorrerGraficar(temp){
+        if(temp != null){
+            var texto = ""
+            var i
+            for(i = 0; i<temp.claves.length; i++){
+                if(i == temp.claves.length-1){
+                    texto = texto + temp.claves[i].toString();
+                }else{
+                    texto = texto + temp.claves[i].toString() + "|"
                 }
             }
-
-            a = new ArbolB(5);
-
-            for(i=0; i<5; i++){
-                a.insertar(i);
+            arrayNodes.push({id: temp.id, label: texto, shape: "box"})
+            texto = ""
+            for(i = 0; i<temp.hijos.length; i++){
+                edges.push({from: temp.id, to: temp.hijos[i].id})
+                this.recorrerGraficar(temp.hijos[i])
             }
-            console.log(a.Raiz)
-            console.log(a.Raiz.Hijos[0])
-            console.log(a.Raiz.Hijos[1])
+        }
+    }
+
+    graficar(){
+        this.recorrerGraficar(this.raiz)
+        var nodes = new vis.DataSet(arrayNodes);
+        var container = document.getElementById("mynetwork");
+        var data = {
+            nodes: nodes,
+            edges: edges,
+        };
+        var options = { 
+            physics: false,
+            layout: {
+                hierarchical: {
+                    direction: 'UD',
+                    nodeSpacing: 150,
+                    sortMethod : 'directed' //hubsize, directed.
+                  }
+            } 
+        };
+        var network = new vis.Network(container, data, options);
+        arrayNodes = []
+        edges = []  
+    }
+}
+
+
+//Metodo de ordenamiento burbuja
+function sort(arreglo){
+    var aux = 0;
+    for(i=0; i< arreglo.length-1; i++){
+        for(j=i+1; j<arreglo.length; j++){
+            if(arreglo[i] > arreglo[j]){
+                aux = arreglo[i];
+                arreglo[i] = arreglo[j];
+                arreglo[j] = aux;
+            }
+        }
+    }
+    return arreglo;
+}
+
+//Metodo que nos indica si el grado es par o impar
+function espar(valor){
+    if (valor%2==0) {
+        return true;
+    }
+    return false;
+}
+
+let arbol = new ArbolB(5)
+function insertarNodo(){
+    var valor = parseInt(document.getElementById("valorNodo").value, 10);
+    document.getElementById("valorNodo").value = ""
+    document.getElementById("valorActualizar").value = ""
+    arbol.agregar(valor)
+    /*for(i=0; i<arbol.raiz.hijos.length; i++){
+        console.log(arbol.raiz.hijos[i].claves)
+    }*/
+}
+
+function buscarNodo(){}
+
+function actualizarNodo(){}
+
+function eliminarNodo(){}
